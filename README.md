@@ -1,73 +1,147 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Project Setup Guide
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## Prerequisites
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Before you begin, ensure you have met the following requirements:
 
-## Description
+- You have installed the latest version of [Node.js](https://nodejs.org/en/download/)
+- You have installed [PostgreSQL](https://www.postgresql.org/download/) and it is running
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Installing NestJS
 
-## Installation
+To install NestJS, follow these steps:
+
+1. Open your terminal.
+2. Install NestJS globally by running the following command:
 
 ```bash
-$ npm install
+npm i -g @nestjs/cli
 ```
 
-## Running the app
+## Cloning the Repository
+
+Clone the repository to your local machine:
+
+```bash
+git clone https://github.com/beedyboy/fintech-app.git
+cd fintech-app
+```
+
+## Installing Dependencies
+
+Install the project dependencies using Yarn:
+
+```bash
+yarn install
+```
+
+## Setting Up Environment Variables
+
+Create a `.env` file in the root directory of your project and copy the following content into it. Replace the placeholder values with your actual environment variables. or rename the `.env.example`
+
+### Example `.env` file
+
+```plaintext
+# Server Configuration
+PORT=8080
+
+# Database Configuration
+DATABASE_HOST=your_db_host
+DATABASE_PORT=your_db_port
+DATABASE_USER=postgres
+DATABASE_PASSWORD=yourpassword
+DATABASE_NAME=your_db
+
+# JWT Configuration
+JWT_ACCESS_SECRET=youraccesssecret
+JWT_REFRESH_SECRET=yourrefreshsecret
+JWT_ACCESS_EXPIRATION=36h
+```
+
+## Running Database Migrations (if applicable)
+
+If your project includes database migrations, run them using the following command:
+
+```bash
+yarn run typeorm migration:run
+```
+
+## Starting the Application
+
+Run the application using one of the following commands:
 
 ```bash
 # development
-$ npm run start
+yarn start
 
 # watch mode
-$ npm run start:dev
+yarn start:dev
 
 # production mode
-$ npm run start:prod
+yarn start:prod
 ```
 
-## Test
+## Testing
+
+Run the tests using the following commands:
 
 ```bash
 # unit tests
-$ npm run test
+yarn test
 
 # e2e tests
-$ npm run test:e2e
+yarn test:e2e
 
 # test coverage
-$ npm run test:cov
+yarn test:cov
 ```
 
-## Support
+## Using the App
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### Step 1: Ensure PostgreSQL is Running
 
-## Stay in touch
+Make sure your PostgreSQL server is running and accessible with the credentials provided in the `.env` file.
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+### Step 2: Interact with the API using Postman
+
+Use a tool like Postman to interact with the API.
+
+#### Example Request
+
+**Method**: `POST`  
+**URL**: `http://localhost:8080/transaction`
+
+**Headers**:
+- `Content-Type: application/json`
+- `Authorization: Bearer <your-jwt-token>`
+
+**Body** (raw JSON):
+```json
+{
+  "amount": 200,
+  "type": "Deposit",
+  "paymentMethod": "paypal",
+  "description": "Refund"
+}
+```
 
 ## License
 
 Nest is [MIT licensed](LICENSE).
+
+---
+
+### Summary
+
+This guide includes:
+1. **Prerequisites**: Necessary installations and machine requirements.
+2. **Installing NestJS**: Instructions for installing NestJS CLI.
+3. **Cloning the Repository**: Steps to clone the repository and navigate to the project directory.
+4. **Installing Dependencies**: Commands to install project dependencies.
+5. **Setting Up Environment Variables**: Example of a `.env` file.
+6. **Running Database Migrations**: Commands to run database migrations if applicable.
+7. **Starting the Application**: Commands to start the application in different modes.
+8. **Testing**: Commands to run various tests.
+9. **Using the App**: Instructions on ensuring PostgreSQL is running and how to interact with the API using Postman.
+
+By following these steps, you will be able to set up, run, and test the NestJS application on your local machine. If you encounter any issues or have further questions, feel free to reach out for assistance.

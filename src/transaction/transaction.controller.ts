@@ -7,7 +7,7 @@ import {
   CreateTransactionDto,
   TransactionResponseDto,
 } from '../dtos/transaction.dto';
-import { useSerialize } from 'src/interceptors/serialize.interceptor';
+import { useSerialize } from '../interceptors/serialize.interceptor';
 
 @Controller('transaction')
 export class TransactionController {
