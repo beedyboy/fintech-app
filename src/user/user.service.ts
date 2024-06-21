@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -53,7 +57,7 @@ export class UserService {
 
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
-        return { status: 'fail', message: 'Invalid email or password' };
+        throw new UnauthorizedException('Invalid email or password');
       }
 
       const token = await this.generateAccessToken(user);
@@ -64,7 +68,12 @@ export class UserService {
         data: { token },
       };
     } catch (error) {
-      return { status: 'fail', message: 'An error occurred while logging in' };
+      if (error instanceof UnauthorizedException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        'An error occurred while logging in',
+      );
     }
   }
 
