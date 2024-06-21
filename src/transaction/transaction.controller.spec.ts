@@ -6,6 +6,8 @@ import { Transaction } from '../entities/transaction.entity';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { TransactionType } from '../enums/transaction.enum';
+import { IUser } from '../dtos/user.dto';
+import { JwtUser } from '../decorators/user.decorator';
 
 describe('TransactionController', () => {
   let controller: TransactionController;
@@ -97,7 +99,7 @@ describe('TransactionController', () => {
   });
 
   it('should return an empty array if no transactions found for user', async () => {
-    const user: User = { ...mockUser, id: 2 };
+    const user: IUser = { ...mockUser, id: 2 };
     const result = await controller.getUserTransactions(user);
     expect(result).toEqual({
       status: 'success',
