@@ -54,6 +54,8 @@ export class TransactionService {
         timestamp: new Date().toISOString(),
         balance: createTransactionDto.amount,
       });
+      // TODO: add transaction reference
+      // TODO: balance should be gotten from user's account and update accordingly
       const newTransaction = await this.transactionRepository.save(transaction);
       return {
         status: 'success',
