@@ -24,7 +24,7 @@ describe('TransactionController (e2e)', () => {
 
   afterAll(async () => {
     await app.close();
-  });yarn 
+  }); 
 
   it('/transaction (GET)', async () => {
     const response = await request(app.getHttpServer())
