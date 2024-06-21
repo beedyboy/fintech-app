@@ -4,6 +4,7 @@ import { Transaction } from '../../src/entities/transaction.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../../src/entities/user.entity';
+import { TransactionType } from '../../src/enums/transaction.enum';
 
 describe('TransactionService', () => {
   let service: TransactionService;
@@ -26,18 +27,22 @@ describe('TransactionService', () => {
     {
       id: 1,
       amount: 100.0,
-      type: 'Deposit',
+      type: TransactionType.DEPOSIT,
       timestamp: '2024-01-01T00:00:00Z',
       paymentMethod: 'credit_card',
       user: mockUser,
+      description: 'Opening Balance',
+      balance: 100.0,
     },
     {
       id: 2,
       amount: 50.0,
-      type: 'Debit',
+      type: TransactionType.WITHDRAWAL,
       timestamp: '2024-01-02T00:00:00Z',
       paymentMethod: 'bank_transfer',
       user: mockUser,
+      description: 'Grocery Store',
+      balance: 50.0,
     },
   ];
 
