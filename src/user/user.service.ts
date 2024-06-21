@@ -30,7 +30,6 @@ export class UserService {
         message: 'User registered successfully',
       };
     } catch (error) {
-        console.error('Register Error:', error);
       return {
         status: 'fail',
         message: 'An error occurred while registering the user',
@@ -54,7 +53,7 @@ export class UserService {
       }
 
       const token = jwt.sign(
-          { id: user.id, email: user.email },
+        { id: user.id, email: user.email },
         process.env.JWT_ACCESS_SECRET,
         { expiresIn: process.env.JWT_ACCESS_EXPIRATION },
       );
