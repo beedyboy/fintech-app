@@ -109,7 +109,7 @@ Use a tool like Postman to interact with the API.
 #### Example Request
 
 **Method**: `POST`  
-**URL**: `http://localhost:8080/transaction`
+**URL**: `http://localhost:8080/api/transaction`
 
 **Headers**:
 - `Content-Type: application/json`
@@ -124,24 +124,3 @@ Use a tool like Postman to interact with the API.
   "description": "Refund"
 }
 ```
-
-## License
-
-Nest is [MIT licensed](LICENSE).
-
----
-
-### Summary
-
-This guide includes:
-1. **Prerequisites**: Necessary installations and machine requirements.
-2. **Installing NestJS**: Instructions for installing NestJS CLI.
-3. **Cloning the Repository**: Steps to clone the repository and navigate to the project directory.
-4. **Installing Dependencies**: Commands to install project dependencies.
-5. **Setting Up Environment Variables**: Example of a `.env` file.
-6. **Running Database Migrations**: Commands to run database migrations if applicable.
-7. **Starting the Application**: Commands to start the application in different modes.
-8. **Testing**: Commands to run various tests.
-9. **Using the App**: Instructions on ensuring PostgreSQL is running and how to interact with the API using Postman.
-
-By following these steps, you will be able to set up, run, and test the NestJS application on your local machine. If you encounter any issues or have further questions, feel free to reach out for assistance.
