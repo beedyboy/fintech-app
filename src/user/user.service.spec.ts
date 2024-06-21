@@ -2,21 +2,25 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from './user.service';
 import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+import { User } from '../entities/user.entity';
 import * as bcrypt from 'bcrypt';
-import * as jwt from 'jsonwebtoken';
-import { User } from '../../src/entities/user.entity';
 
 jest.mock('bcrypt');
-jest.mock('jsonwebtoken');
 
 describe('UserService', () => {
   let service: UserService;
   let repository: Repository<User>;
+  let jwtService: JwtService;
+  let configService: ConfigService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UserService,
+        JwtService,
+        ConfigService,
         {
           provide: getRepositoryToken(User),
           useClass: Repository,
@@ -26,6 +30,8 @@ describe('UserService', () => {
 
     service = module.get<UserService>(UserService);
     repository = module.get<Repository<User>>(getRepositoryToken(User));
+    jwtService = module.get<JwtService>(JwtService);
+    configService = module.get<ConfigService>(ConfigService);
   });
 
   it('should be defined', () => {
@@ -71,16 +77,20 @@ describe('UserService', () => {
 
     jest.spyOn(repository, 'findOne').mockResolvedValue(mockUser as User);
     jest.spyOn(bcrypt, 'compare').mockResolvedValue(true);
-    jest.spyOn(jwt, 'sign').mockImplementation(() => {});
 
-    process.env.JWT_ACCESS_SECRET = 'testsecret';
-    process.env.JWT_ACCESS_EXPIRATION = '1h';
+    jest.spyOn(configService, 'get').mockImplementation((key: string) => {
+      if (key === 'JWT_ACCESS_SECRET') return 'testsecret';
+      if (key === 'JWT_ACCESS_EXPIRATION') return '1h';
+    });
+
+    const token = 'mockJwtToken';
+    jest.spyOn(jwtService, 'signAsync').mockResolvedValue(token);
 
     const response = await service.login('boladebode@gmail.com', 'password123');
 
     expect(response.status).toBe('success');
     expect(response.message).toBe('Login successful');
-    expect(response.data).toHaveProperty('token');
+    expect(response.data).toHaveProperty('token', token);
   });
 
   it('should fail to login with invalid credentials', async () => {
