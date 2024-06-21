@@ -3,10 +3,43 @@ import { TransactionService } from './transaction.service';
 import { Transaction } from '../../src/entities/transaction.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { User } from '../../src/entities/user.entity';
 
 describe('TransactionService', () => {
   let service: TransactionService;
   let repository: Repository<Transaction>;
+
+  const mockUser: User = {
+    id: 1,
+    email: 'boladebode@gmail.com',
+    firstName: 'Bolade',
+    lastName: 'Akinniyi',
+    password: 'hashedpassword',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    deletedAt: null,
+    transactions: [],
+    hashPassword: async () => {},
+  };
+
+  const mockTransactions: Transaction[] = [
+    {
+      id: 1,
+      amount: 100.0,
+      type: 'Deposit',
+      timestamp: '2024-01-01T00:00:00Z',
+      paymentMethod: 'credit_card',
+      user: mockUser,
+    },
+    {
+      id: 2,
+      amount: 50.0,
+      type: 'Debit',
+      timestamp: '2024-01-02T00:00:00Z',
+      paymentMethod: 'bank_transfer',
+      user: mockUser,
+    },
+  ];
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -30,47 +63,7 @@ describe('TransactionService', () => {
   });
 
   it('should fetch a user transactions and return them', async () => {
-    const userId = 1;
-    const mockTransactions: Transaction[] = [
-      {
-        id: 1,
-        amount: 100.0,
-        type: 'Deposit',
-        timestamp: '2024-01-01T00:00:00Z',
-        paymentMethod: 'credit_card',
-        user: {
-          id: userId,
-          email: 'boladebode@gmail.com',
-          firstName: 'Bolade',
-          lastName: 'Akinniyi',
-          password: 'hashedpassword',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          deletedAt: null,
-          transactions: [],
-          hashPassword: async () => {},
-        },
-      },
-      {
-        id: 2,
-        amount: 50.0,
-        type: 'Debit',
-        timestamp: '2024-01-02T00:00:00Z',
-        paymentMethod: 'bank_transfer',
-        user: {
-          id: userId,
-          email: 'boladebode@gmail.com',
-          firstName: 'Bolade',
-          lastName: 'Akinniyi',
-          password: 'hashedpassword',
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          deletedAt: null,
-          transactions: [],
-          hashPassword: async () => {},
-        },
-      },
-    ];
+    const userId = mockUser.id;
 
     jest.spyOn(repository, 'find').mockResolvedValue(mockTransactions);
 
@@ -107,5 +100,18 @@ describe('TransactionService', () => {
       message: 'Transactions fetched successfully',
       data: [],
     });
+  });
+
+  it('should handle database errors gracefully', async () => {
+    const userId = 1;
+    jest
+      .spyOn(repository, 'find')
+      .mockRejectedValue(new Error('Database error'));
+
+    try {
+      await service.getMyTransactions(userId);
+    } catch (error) {
+      expect(error.message).toBe('Database error');
+    }
   });
 });

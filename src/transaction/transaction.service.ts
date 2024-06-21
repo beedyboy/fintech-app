@@ -10,16 +10,25 @@ export class TransactionService {
     private readonly transactionRepository: Repository<Transaction>,
   ) {}
 
-  async getMyTransactions(userId: number) {
-    const transactions = await this.transactionRepository.find({
-      where: { user: { id: userId } },
-      relations: ['user'],
-    });
+  async getMyTransactions(
+    userId: number,
+  ): Promise<{ status: string; message: string; data?: any }> {
+    try {
+      const transactions = await this.transactionRepository.find({
+        where: { user: { id: userId } },
+        relations: ['user'],
+      });
 
-    return {
-      status: 'success',
-      message: 'Transactions fetched successfully',
-      data: transactions,
-    };
+      return {
+        status: 'success',
+        message: 'Transactions fetched successfully',
+        data: transactions,
+      };
+    } catch (error) {
+      return {
+        status: 'fail',
+        message: 'An error occurred while fetching transactions',
+      };
+    }
   }
 }
