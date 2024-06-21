@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Transaction } from '../entities/transaction.entity';
 import { Repository } from 'typeorm';
+import { CreateTransactionDto } from 'src/dtos/transaction.dto';
+import { User } from '../entities/user.entity';
 
 @Injectable()
 export class TransactionService {
@@ -30,5 +32,23 @@ export class TransactionService {
         message: 'An error occurred while fetching transactions',
       };
     }
+  }
+
+  async addTransaction(
+    user: User,
+    createTransactionDto: CreateTransactionDto,
+  ): Promise<{ status: string; message: string; data?: Transaction }> {
+    const transaction = this.transactionRepository.create({
+      ...createTransactionDto,
+      user,
+      timestamp: new Date().toISOString(),
+      balance: createTransactionDto.amount,
+    });
+    const newTransaction = await this.transactionRepository.save(transaction);
+    return {
+      status: 'success',
+      message: 'Transaction added successfully',
+      data: newTransaction,
+    };
   }
 }
