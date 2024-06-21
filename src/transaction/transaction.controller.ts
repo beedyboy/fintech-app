@@ -3,7 +3,11 @@ import { JwtUser } from '../decorators/user.decorator';
 import { IUser } from '../dtos/user.dto';
 import { JwtGuard } from '../guards/jwt.guards';
 import { TransactionService } from './transaction.service';
-import { CreateTransactionDto } from '../dtos/transaction.dto';
+import {
+  CreateTransactionDto,
+  TransactionResponseDto,
+} from '../dtos/transaction.dto';
+import { useSerialize } from '../interceptors/serialize.interceptor';
 
 @Controller('transaction')
 export class TransactionController {
@@ -11,11 +15,13 @@ export class TransactionController {
 
   @UseGuards(JwtGuard)
   @Get()
+  @useSerialize(TransactionResponseDto)
   async getUserTransactions(@JwtUser() user: IUser) {
     return this.transactionService.getMyTransactions(user.id);
   }
 
   @UseGuards(JwtGuard)
+  @useSerialize(TransactionResponseDto)
   @Post()
   async addTransaction(
     @JwtUser() user: IUser,

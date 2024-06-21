@@ -4,6 +4,8 @@ import { TransactionService } from './transaction.service';
 import { CreateTransactionDto } from '../dtos/transaction.dto';
 import { User } from '../entities/user.entity';
 import { TransactionType } from '../enums/transaction.enum';
+import { JwtGuard } from '../guards/jwt.guards';
+import { JwtUser } from '../decorators/user.decorator';
 
 describe('TransactionController', () => {
   let controller: TransactionController;
