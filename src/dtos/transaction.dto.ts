@@ -6,7 +6,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { TransactionType } from 'src/enums/transaction.enum';
+import { TransactionType } from '../enums/transaction.enum';
 
 export class CreateTransactionDto {
   @IsNotEmpty()

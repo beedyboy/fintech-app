@@ -109,13 +109,19 @@ describe('TransactionController', () => {
         description: 'Refund',
       };
 
-      const result = await controller.addTransaction(mockUser, createTransactionDto);
+      const result = await controller.addTransaction(
+        mockUser,
+        createTransactionDto,
+      );
       expect(result).toEqual({
         status: 'success',
         message: 'Transaction added successfully',
         data: mockTransaction,
       });
-      expect(service.addTransaction).toHaveBeenCalledWith(mockUser, createTransactionDto);
+      expect(service.addTransaction).toHaveBeenCalledWith(
+        mockUser.id,
+        createTransactionDto,
+      );
     });
   });
 });

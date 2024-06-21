@@ -6,10 +6,12 @@ import { User } from '../entities/user.entity';
 import { TransactionType } from '../enums/transaction.enum';
 import { CreateTransactionDto } from '../dtos/transaction.dto';
 import { MockTransactionRepository } from '../mocks/transaction.repository.mock';
+import { MockUserRepository } from '../mocks/user.repository.mock';
 
 describe('TransactionService', () => {
   let service: TransactionService;
   let transactionRepository: MockTransactionRepository;
+  let userRepository: MockUserRepository;
 
   const mockUser: User = {
     id: 1,
@@ -66,11 +68,16 @@ describe('TransactionService', () => {
           provide: getRepositoryToken(Transaction),
           useClass: MockTransactionRepository,
         },
+        {
+          provide: getRepositoryToken(User),
+          useClass: MockUserRepository,
+        },
       ],
     }).compile();
 
     service = module.get<TransactionService>(TransactionService);
     transactionRepository = module.get(getRepositoryToken(Transaction));
+    userRepository = module.get(getRepositoryToken(User));
   });
 
   it('should be defined', () => {
@@ -135,6 +142,7 @@ describe('TransactionService', () => {
         description: 'Refund',
       };
 
+      jest.spyOn(userRepository, 'findOneBy').mockResolvedValue(mockUser);
       jest
         .spyOn(transactionRepository, 'create')
         .mockReturnValue(mockTransaction);
@@ -143,7 +151,7 @@ describe('TransactionService', () => {
         .mockResolvedValue(mockTransaction);
 
       const result = await service.addTransaction(
-        mockUser,
+        mockUser.id,
         createTransactionDto,
       );
 
@@ -152,6 +160,9 @@ describe('TransactionService', () => {
         message: 'Transaction added successfully',
         data: mockTransaction,
       });
+      expect(userRepository.findOneBy).toHaveBeenCalledWith({
+        id: mockUser.id,
+      });
       expect(transactionRepository.create).toHaveBeenCalledWith({
         ...createTransactionDto,
         user: mockUser,
@@ -159,6 +170,30 @@ describe('TransactionService', () => {
         balance: createTransactionDto.amount,
       });
       expect(transactionRepository.save).toHaveBeenCalledWith(mockTransaction);
+    });
+
+    it('should return fail status if user is not found', async () => {
+      const createTransactionDto: CreateTransactionDto = {
+        amount: 200,
+        type: TransactionType.DEPOSIT,
+        paymentMethod: 'paypal',
+        description: 'Refund',
+      };
+
+      jest.spyOn(userRepository, 'findOneBy').mockResolvedValue(null);
+
+      const result = await service.addTransaction(
+        mockUser.id,
+        createTransactionDto,
+      );
+
+      expect(result).toEqual({
+        status: 'fail',
+        message: 'User not found',
+      });
+      expect(userRepository.findOneBy).toHaveBeenCalledWith({
+        id: mockUser.id,
+      });
     });
   });
 });

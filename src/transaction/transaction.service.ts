@@ -10,6 +10,8 @@ export class TransactionService {
   constructor(
     @InjectRepository(Transaction)
     private readonly transactionRepository: Repository<Transaction>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {}
 
   async getMyTransactions(
@@ -35,20 +37,34 @@ export class TransactionService {
   }
 
   async addTransaction(
-    user: User,
+    userId: number,
     createTransactionDto: CreateTransactionDto,
   ): Promise<{ status: string; message: string; data?: Transaction }> {
-    const transaction = this.transactionRepository.create({
-      ...createTransactionDto,
-      user,
-      timestamp: new Date().toISOString(),
-      balance: createTransactionDto.amount,
-    });
-    const newTransaction = await this.transactionRepository.save(transaction);
-    return {
-      status: 'success',
-      message: 'Transaction added successfully',
-      data: newTransaction,
-    };
+    try {
+      const user = await this.userRepository.findOneBy({ id: userId });
+      if (!user) {
+        return {
+          status: 'fail',
+          message: 'User not found',
+        };
+      }
+      const transaction = this.transactionRepository.create({
+        ...createTransactionDto,
+        user,
+        timestamp: new Date().toISOString(),
+        balance: createTransactionDto.amount,
+      });
+      const newTransaction = await this.transactionRepository.save(transaction);
+      return {
+        status: 'success',
+        message: 'Transaction added successfully',
+        data: newTransaction,
+      };
+    } catch (error) {
+      return {
+        status: 'fail',
+        message: 'An error occurred while adding the transaction',
+      };
+    }
   }
 }
