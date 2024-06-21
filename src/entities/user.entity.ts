@@ -6,8 +6,10 @@ import {
   DeleteDateColumn,
   UpdateDateColumn,
   BeforeInsert,
+  OneToMany,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { Transaction } from './transaction.entity';
 
 @Entity()
 export class User {
@@ -32,6 +34,9 @@ export class User {
   @CreateDateColumn() createdAt!: Date;
 
   @UpdateDateColumn() updatedAt!: Date;
+
+  @OneToMany(() => Transaction, (transaction) => transaction.user)
+  transactions: Transaction[];
 
   @BeforeInsert()
   async hashPassword() {
