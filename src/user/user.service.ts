@@ -2,14 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import * as jwt from 'jsonwebtoken';
 import { User } from '../entities/user.entity';
+import { JwtService } from '@nestjs/jwt';
+import { IUser } from 'src/dtos/user.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    private jwtService: JwtService,
+    private configService: ConfigService,
   ) {}
 
   async register(
@@ -52,11 +56,8 @@ export class UserService {
         return { status: 'fail', message: 'Invalid email or password' };
       }
 
-      const token = jwt.sign(
-        { id: user.id, email: user.email },
-        process.env.JWT_ACCESS_SECRET,
-        { expiresIn: process.env.JWT_ACCESS_EXPIRATION },
-      );
+      const token = await this.generateAccessToken(user);
+
       return {
         status: 'success',
         message: 'Login successful',
@@ -65,5 +66,23 @@ export class UserService {
     } catch (error) {
       return { status: 'fail', message: 'An error occurred while logging in' };
     }
+  }
+
+  async generateAccessToken(user: Partial<User>) {
+    const { id, firstName, lastName, email } = user;
+
+    const payload: IUser = {
+      id,
+      firstName,
+      lastName,
+      email,
+    };
+
+    const accessToken = await this.jwtService.signAsync(payload, {
+      secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
+      expiresIn: this.configService.get<string>('JWT_ACCESS_EXPIRATION'),
+    });
+
+    return accessToken;
   }
 }
