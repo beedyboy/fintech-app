@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TransactionService } from './transaction.service';
-import { Transaction } from '../entities/transaction.entity';
+import { Transaction } from '../../src/entities/transaction.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -31,14 +31,25 @@ describe('TransactionService', () => {
 
   it('should fetch a user transactions and return them', async () => {
     const userId = 1;
-    const mockTransactions = [
+    const mockTransactions: Transaction[] = [
       {
         id: 1,
         amount: 100.0,
         type: 'Deposit',
         timestamp: '2024-01-01T00:00:00Z',
         paymentMethod: 'credit_card',
-        user: { id: userId, email: 'boladebode@gmail.com' },
+        user: {
+          id: userId,
+          email: 'boladebode@gmail.com',
+          firstName: 'Bolade',
+          lastName: 'Akinniyi',
+          password: 'hashedpassword',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          deletedAt: null,
+          transactions: [],
+          hashPassword: async () => {},
+        },
       },
       {
         id: 2,
@@ -46,7 +57,18 @@ describe('TransactionService', () => {
         type: 'Debit',
         timestamp: '2024-01-02T00:00:00Z',
         paymentMethod: 'bank_transfer',
-        user: { id: userId, email: 'test@example.com' },
+        user: {
+          id: userId,
+          email: 'boladebode@gmail.com',
+          firstName: 'Bolade',
+          lastName: 'Akinniyi',
+          password: 'hashedpassword',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          deletedAt: null,
+          transactions: [],
+          hashPassword: async () => {},
+        },
       },
     ];
 
